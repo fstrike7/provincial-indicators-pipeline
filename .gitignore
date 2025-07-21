@@ -1,0 +1,42 @@
+# Maven / Gradle
+**/target/
+**/build/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.vscode/
+
+# OS junk
+'thumbs.db'
+.DS_Store
+
+# Logs
+*.log
+**/logs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Docker artifacts
+*.pid
+
+# Data generated
+/data/generated/
+/data/tmp/
+
+# Credentials
+*.pem
+*.key
+secrets/*.json
+
+# Personal documentation
+docs/

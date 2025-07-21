@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: provincial-indicators-api
+  main:
+    banner-mode: "console"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+aws:
+  s3:
+    endpoint: http://localhost:9000        # endpoint MinIO
+    bucket: indicadores-provincias
+    region: us-east-1
+    access-key: minio
+    secret-key: minio123
