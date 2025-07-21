@@ -1,4 +1,4 @@
-package ar.com.faustino.provindicators.api.config;
+package ar.com.faustino.provindicators.config;
 
 import java.net.URI;
 

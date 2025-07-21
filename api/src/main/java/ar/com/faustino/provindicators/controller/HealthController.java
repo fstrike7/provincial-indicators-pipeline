@@ -1,4 +1,4 @@
-package ar.com.faustino.provindicators.api.controller;
+package ar.com.faustino.provindicators.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

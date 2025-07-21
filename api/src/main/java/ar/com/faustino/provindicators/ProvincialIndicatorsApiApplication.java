@@ -1,4 +1,4 @@
-package ar.com.faustino.provindicators.api;
+package ar.com.faustino.provindicators;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
