@@ -54,34 +54,39 @@ SCHEMA = StructType([
     StructField("valor", StringType(), True),
 ])
 
+def transform(df):
+    """Pure transform: recibe DF raw con columnas originales y retorna (agg_df, latest_df)."""
+    from pyspark.sql import functions as F
+    from pyspark.sql.types import DoubleType
+    from pyspark.sql.window import Window
+
+    # normalize
+    df = df.withColumn("valor_clean", F.regexp_replace(F.col("valor"), ",", "."))
+    df = df.withColumn("valor_d", F.col("valor_clean").cast(DoubleType()))
+    # parse fecha + año
+    df = df.withColumn("fecha", F.to_date("indice_tiempo", "yyyy-MM-dd"))
+    df = df.withColumn("anio", F.year("fecha"))
+    # provincias solamente
+    dfp = df.filter(F.upper(F.col("alcance_tipo")) == F.lit("PROVINCIA"))
+
+    agg = (dfp.groupBy("alcance_nombre", "indicador", "anio")
+              .agg(F.avg("valor_d").alias("avg_valor"),
+                   F.min("valor_d").alias("min_valor"),
+                   F.max("valor_d").alias("max_valor"),
+                   F.count("valor_d").alias("n")))
+
+    w = Window.partitionBy("alcance_nombre", "indicador").orderBy(F.col("fecha").desc())
+    latest = (dfp.withColumn("rn", F.row_number().over(w))
+                 .filter(F.col("rn") == 1)
+                 .select("alcance_nombre", "indicador", "fecha", F.col("valor_d").alias("valor")))
+
+    return agg, latest
 
 def run_etl(spark, csv_path, processed_prefix, s3, bucket):
     print(f"[ETL] Leyendo CSV {csv_path}")
     df = spark.read.csv(csv_path, header=True, schema=SCHEMA, encoding="ISO-8859-1")
 
-    # normalize
-    df = df.withColumn("valor_clean", F.regexp_replace(F.col("valor"), ",", "."))
-    df = df.withColumn("valor_d", F.col("valor_clean").cast(DoubleType()))
-
-    # parse fecha + año
-    df = df.withColumn("fecha", F.to_date("indice_tiempo", "yyyy-MM-dd"))
-    df = df.withColumn("anio", F.year("fecha"))
-
-    # Provincias solamente
-    dfp = df.filter(F.upper(F.col("alcance_tipo")) == F.lit("PROVINCIA"))
-
-    # aggr año
-    agg = (dfp.groupBy("alcance_nombre", "indicador", "anio")
-            .agg(F.avg("valor_d").alias("avg_valor"),
-                 F.min("valor_d").alias("min_valor"),
-                 F.max("valor_d").alias("max_valor"),
-                 F.count("valor_d").alias("n")))
-
-    # Último valor (por fecha)
-    w = Window.partitionBy("alcance_nombre", "indicador").orderBy(F.col("fecha").desc())
-    latest = (dfp.withColumn("rn", F.row_number().over(w))
-                 .filter(F.col("rn") == 1)
-                 .select("alcance_nombre", "indicador", "fecha", F.col("valor_d").alias("valor")))
+    agg, latest = transform(df)
 
     tmpdir = Path(tempfile.mkdtemp(prefix="provind-etl-"))
     agg_dir = tmpdir / "agg_province_indicator_year"
