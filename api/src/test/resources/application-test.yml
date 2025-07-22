@@ -1,0 +1,8 @@
+aws:
+  s3:
+    endpoint: http://localhost:9000   # no se va a usar realmente
+    bucket: test-bucket
+    region: us-east-1
+    access-key: test
+    secret-key: test
+    
