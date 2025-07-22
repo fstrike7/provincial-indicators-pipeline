@@ -115,8 +115,6 @@ Flujo recomendado para simular entorno profesional:
 | `develop`   | Integración continua   | Build + test         | Entorno Dev local/compose |
 | `main`      | Estable / demo pública | Build + test release | Prod simulado             |
 
-> Configurá en GitHub “branch protection rules” para que **no se pueda mergear a **``** ni **``** sin CI verde**.
-
 ---
 
 ## Requisitos locales
@@ -274,7 +272,7 @@ Prometheus scrapea:
     - targets: ["api:8080"]
 ```
 
-Grafana trae la datasource provisionada automáticamente (usuario/password admin/admin por defecto). Agregaremos dashboards para:
+Grafana trae la datasource provisionada automáticamente (usuario/password admin/admin por defecto). TODO: Agregar dashboards para:
 
 - Requests/seg
 - Latencia promedio
