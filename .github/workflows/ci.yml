@@ -18,6 +18,7 @@ jobs:
       - name: Build & test API
         working-directory: api
         run: |
+          chmod +x mvnw
           ./mvnw -B clean verify
 
   test-spark:
