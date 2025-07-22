@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-echo "[run_etl] TODO: PySpark job aún no implementado."
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+INFRA_DIR="${SCRIPT_DIR}/../infra"
+
+( cd "$INFRA_DIR" && docker compose run --rm spark-jobs "$@" )

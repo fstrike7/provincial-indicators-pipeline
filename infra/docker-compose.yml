@@ -73,6 +73,24 @@ services:
       - minio
     networks:
       - provincial-net
+  spark-jobs:
+    build:
+      context: ../spark-jobs
+      dockerfile: Dockerfile
+    container_name: spark-jobs
+    environment:
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=minio
+      - MINIO_SECRET_KEY=minio123
+      - MINIO_BUCKET=indicadores-provincias
+      - RAW_KEY=raw/indicadores-provinciales.csv
+      - PROCESSED_PREFIX=processed
+    depends_on:
+      - minio
+    networks:
+      - provincial-net
+    entrypoint: ["/opt/run.sh"]
+    restart: "no"
 
 volumes:
   minio-data:
