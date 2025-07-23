@@ -1,0 +1,42 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches:
+      - feature/terraform
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  terraform:
+    name: Terraform Plan/Apply
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/develop'
+        run: terraform apply -auto-approve tfplan

@@ -1,0 +1,38 @@
+name: Deploy to ECS-DEV
+
+on:
+  workflow_run:
+    workflows: ["Build & Publish DockerHub Images"]
+    branches: [develop]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # check region
+
+      - name: Update ECS Service (API)
+        run: |
+          aws ecs update-service \
+            --cluster ecs-dev \
+            --service provincial-indicators-api-dev \
+            --force-new-deployment
+
+      - name: Update ECS Service (Spark Jobs)
+        run: |
+          aws ecs update-service \
+            --cluster ecs-dev \
+            --service provincial-indicators-spark-dev \
+            --force-new-deployment
