@@ -23,7 +23,7 @@ services:
     networks:
       - provincial-net
 
-  # Prometheus para scrapear métricas (incluiremos la API cuando esté levantada)
+  # Prometheus para scrapear métricas
   prometheus:
     image: prom/prometheus:v3.0.0
     container_name: prometheus
@@ -54,7 +54,6 @@ services:
     networks:
       - provincial-net
 
-  # Spring Boot API (se construirá localmente). Comentar si aún no querés build.
   api:
     build:
       context: ../api
@@ -91,6 +90,18 @@ services:
       - provincial-net
     entrypoint: ["/opt/run.sh"]
     restart: "no"
+  redshift:
+    image: postgres:13
+    container_name: redshift-sim
+    environment:
+      POSTGRES_USER: redshift_user
+      POSTGRES_PASSWORD: redshift_pass
+      POSTGRES_DB: redshift_db
+    ports:
+      - "5439:5432"
+    volumes:
+      - ./data/output:/docker-entrypoint-initdb.d
+
 
 volumes:
   minio-data:

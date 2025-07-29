@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  redshift-sim:
+    image: postgres:13
+    container_name: redshift-sim
+    environment:
+      POSTGRES_USER: redshift_user
+      POSTGRES_PASSWORD: redshift_pass
+      POSTGRES_DB: redshift_db
+    ports:
+      - "5439:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
