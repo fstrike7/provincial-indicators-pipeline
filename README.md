@@ -301,3 +301,32 @@ Inicialmente:
   - Verificar que haya JSON de latest y agregados con filas esperadas.
 
 ---
+
+
+### 🔀 Branches destacadas
+
+Este proyecto se gestiona con una rama principal (`develop`) y ramas feature para funcionalidades aisladas. Algunas destacadas:
+
+- [`feature/terraform`](https://github.com/fstrike7/provincial-indicators-pipeline/tree/feature/terraform): Implementación de infraestructura con **Terraform**, incluyendo ECS, ALB y redes en AWS.
+- [`feature/redshift-local`](https://github.com/fstrike7/provincial-indicators-pipeline/tree/feature/redshift-local): Simulación de **Amazon Redshift** usando PostgreSQL en Docker, para pruebas de integración local con datos procesados.
+
+
+### 🛠️ Comandos disponibles (Makefile)
+
+> Se requiere `make` instalado (Linux/macOS o WSL en Windows).
+
+| Comando                | Descripción                                                                 |
+|------------------------|-----------------------------------------------------------------------------|
+| `make up`              | Levanta los servicios con Docker Compose.                                  |
+| `make down`            | Apaga los servicios.                                                        |
+| `make reload-api`      | Reconstruye y levanta solo la API.                                         |
+| `make load-raw`        | Sube el CSV raw a MinIO (mock de S3).                                      |
+| `make run-etl`         | Ejecuta el job de PySpark para procesar los datos.                         |
+| `make redshift-up`     | Levanta el contenedor de Redshift simulado (PostgreSQL + adminer opcional).|
+| `make redshift-test`   | Ejecuta un script Python que conecta al Redshift simulado e inserta datos. |
+| `make full-pipeline`   | Ejecuta el flujo completo: build + compose + carga + ETL.                  |
+
+
+### 📘 [Guía paso a paso de ejecución](./wiki/guia-ejecucion.md)
+
+Instructivo completo con explicación detallada de cada comando y configuración necesaria para correr todo el pipeline en local.
